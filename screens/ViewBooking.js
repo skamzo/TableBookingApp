@@ -1,10 +1,56 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { restaurants } from './restaurant';
 import {Alert, Modal, ImageBackground, View, Text, SafeAreaView, Dimensions, StyleSheet, Image, TextInput, TouchableOpacity, FlatList, ScrollView} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
+import firebase from 'firebase';
+import { auth, db } from '../firebase/firebase';
 
 const { width, height } = Dimensions.get('screen');
 
-const ViewBooking = ({ navigation }) => {
+const ViewBooking = ({ navigation, user, route }) => {
+
+  //const {name} = route.params;
+
+  //  const [restaurants, setRestaurants] = React.useState(null);
+
+  //   React.useState(() => {
+  //       let { restaurants } = route.params;
+  //       setRestaurants(restaurants)
+  //   }, [restaurants])
+
+  const [users, setUsers] = React.useState(null)
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
+  const [imageUrl, setImageUrl] = React.useState('');
+
+  const getUsers = async () => {
+    const querySnap = await db.collection('users').where('uid','!=',user.uid).get()
+    const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+    console.log(allusers)
+    setUsers(allusers)
+}
+
+
+  useEffect(() => {
+    getUsers()
+  },[])
+
+  const RenderCard = ({item}) => {
+    return (
+        <View style={styles.myButton}>
+            <View>
+                <Text>
+                    {item.firstName + " " + item.lastName}
+                </Text>
+                <Text>
+                    {item.email}
+                </Text>
+            </View>
+       
+        </View>
+    )
+}
 
     return (
       <View style={styles.container}> 
@@ -14,9 +60,31 @@ const ViewBooking = ({ navigation }) => {
            >
                 
            </ImageBackground>
+           <View style={{
+                     position: "absolute",
+                     top: 0,
+                     left: 0,
+                     right: 0,
+                     height: 90,
+                     flexDirection: 'row',
+                     alignItems: 'flex-end',
+                     paddingHorizontal: 25,
+                     paddingBottom: 20
+                 }}>
+                <TouchableOpacity
+                 
+                  onPress={() => navigation.goBack()}
+                >
+                    <Ionicons name="arrow-back-circle-outline" size={30} color="#fff" />
+                </TouchableOpacity>
+            </View>
            <Text style={{fontWeight: 'bold', fontSize: 26, marginTop: 40}}>Thank you for booking!</Text>
-           <View>
-              
+           <View style={{marginTop: 50, width: '70%'}}>
+              <Text style={{fontWeight: 'bold', textAlign: 'center'}}>
+                  congratulations, you have booked hotel for {route.params.count} people on {moment(route.params.date).format('DD/MM/YYYY')}
+                  at {moment(route.params.date).format('hh:mm a')}
+                {/* {route.params.text} */}
+              </Text>
            </View>
            <View style={styles.myButton}>
              <TouchableOpacity onPress={() => navigation.navigate('')} >
@@ -66,11 +134,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#255E69',
         marginHorizontal: 50,
         marginLeft: 54,
-        marginBottom: 50,
+         marginTop: 90,
         borderRadius: 58,
         width: width * 0.7,
         height: height * 0.05,
-        marginTop: 200
+
     },
 
     btnText: {
@@ -87,7 +155,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#255E69',
       marginHorizontal: 50,
       marginLeft: 54,
-      marginBottom: 50,
+      marginTop: 60,
       borderRadius: 58,
       width: width * 0.3,
       height: height * 0.05,

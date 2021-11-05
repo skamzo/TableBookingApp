@@ -1,7 +1,6 @@
 import React from 'react';
-import { restaurants } from './restaurant';
-import {Alert, Modal, ImageBackground, View, Text, SafeAreaView, Dimensions, StyleSheet, Image, TextInput, TouchableOpacity, FlatList, ScrollView} from 'react-native';
-import BookingScreen from './BookingScreen';
+import {ImageBackground, View, Text, SafeAreaView, Dimensions, StyleSheet, Image, TextInput, TouchableOpacity, FlatList, ScrollView} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { foodmenu } from './restaurant';
 
 const { width, height } = Dimensions.get('screen');
@@ -56,13 +55,32 @@ const DetailsScreen = ({ route, navigation }) => {
                 width: '100%'
               }}   
           />
+          <View style={{
+                     position: "absolute",
+                     top: 0,
+                     left: 0,
+                     right: 0,
+                     height: 90,
+                     flexDirection: 'row',
+                     alignItems: 'flex-end',
+                     paddingHorizontal: 25,
+                     paddingBottom: 20
+                 }}>
+                <TouchableOpacity
+                 
+                  onPress={() => navigation.goBack()}
+                >
+                    <Ionicons name="arrow-back-circle-outline" size={30} color="#fff" />
+                </TouchableOpacity>
+            </View>
         </View>
-           <View>
-           <Text style={{marginTop: 240, marginLeft: 20, fontWeight: 'bold', fontSize: 20}}>{restaurants.name}</Text>
-           </View>
-            <Text style={{marginLeft: 20, fontSize: 17}}>MENU</Text>
       </View>
-
+       
+        <View>
+           <Text style={{marginTop: 200, marginLeft: 20, fontWeight: 'bold', fontSize: 20}}>{restaurants.name}</Text>
+           <Text style={{marginLeft: 20, fontSize: 15}}>MENU</Text>
+        </View>
+            
       <View style={styles.flatList}>
            <FlatList
                 data={foodmenu}
@@ -73,9 +91,9 @@ const DetailsScreen = ({ route, navigation }) => {
                       <HorizontalFoodCard
                            containerStyle={{
                               height: 80,
-                              width: 170,
+                              width: 200,
                               alignItems: 'center',
-                              marginHorizontal: 50,
+                              marginHorizontal: 65,
                               marginBottom: 10
                            }}
                            imageStyle={{
@@ -85,15 +103,14 @@ const DetailsScreen = ({ route, navigation }) => {
                               width: 70
                            }}
                            item={item}
-                      />
-                      
+                      />                     
                     )
                 }}
            >
            </FlatList>
       </View>
-      <Text style={{fontWeight: 'bold', fontSize: 15, marginTop: 10, textAlign: "center"}}>About Restaurant</Text>
-      <View style={{marginTop: 25}}>
+      <Text style={{fontWeight: 'bold', fontSize: 17, marginTop: 6, textAlign: "center"}}>About Restaurant</Text>
+      <View style={{marginTop: 10}}>
           <Text style={{marginHorizontal: 15}}>{restaurants.description}</Text>
       </View>
     </SafeAreaView>
@@ -154,7 +171,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginHorizontal: 50,
         marginLeft: 54,
-        marginBottom: 50,
+        marginBottom: 20,
         borderRadius: 58
     },
 
@@ -166,5 +183,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontWeight: 'bold'
     },
+
+    flatList: {
+      marginTop: 15
+    }
 
   })

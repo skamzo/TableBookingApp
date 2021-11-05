@@ -37,7 +37,7 @@ const restaurants = [
         id: '6',
         name: 'Holy Smokin Butts BBQ',
         image: require('../assets/image6.jpg'),
-        description: 'Aliquam non nisl pellentesque, sodales ipsum vel, tincidunt enim. Aenean pretium ex dapibus, vestibulum quam pellentesque, facilisis arcu. Nam congue, tortor nec scelerisque facilisis, ante erat dignissim mauris, eu faucibus odio purus sit amet quam. Integer eu dolor in enim blandit posuere.',
+        description: 'Aliquam non nisl pellentesque, sodales ipsum vel, tincidunt enim. Aenean pretium ex dapibus, vestibulum quam pellentesque, facilisis arcu. Nam congue, tortor nec scelerisque facilisis, ante erat dignissim mauris.',
 
       },
   ];

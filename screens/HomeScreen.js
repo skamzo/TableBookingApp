@@ -2,6 +2,7 @@ import React from 'react';
 import { restaurants } from './restaurant';
 import { View, Text, SafeAreaView, FlatList, StyleSheet, Image, TouchableOpacity, TextInput, Dimensions} from 'react-native';
 import { FontAwesome5 } from "@expo/vector-icons"
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -18,12 +19,10 @@ const HomeScreen = ({navigation}) => {
           <TextInput style={styles.input} placeholder={placeholder} />
      </View>
     );
-
   }   
 
   const Item = ({ image, name }) => {
-    return (
-     
+    return (   
        <View style={{flexDirection: 'column'}}>
        <View>
       <Image style={styles.images} source={image}/>
@@ -31,15 +30,22 @@ const HomeScreen = ({navigation}) => {
       <View style={{marginTop:-30, backgroundColor: 'white', textAlign: 'center', opacity: 0.9}}>
       <Text style={styles.nameText}>{name}</Text>
       </View>
-      </View>
-       
-     
+      </View>         
     );
   } 
 
-  // const Card = () => {
-  //     return <View></View>
-  // };
+  const LineDivider = ({ lineStyle }) => {
+      return (
+        <View
+           style={{
+              height: 2,
+              width: '100%',
+              backgroundColor: '#8A8F9E',
+              ...lineStyle
+           }}
+        />
+      )
+  };
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#ECF0F6' }}>
@@ -65,6 +71,7 @@ const HomeScreen = ({navigation}) => {
                   //ItemSeparatorComponent={ItemSeparatorComponent}
             />
          </View>
+    
          <View style={styles.bottomBar}>
              <View style={styles.containerIcon}>
              <View>
@@ -78,13 +85,18 @@ const HomeScreen = ({navigation}) => {
               }} name='book' size={20} color={'#fff'} />
              </View>
              <View>
+        
                 <FontAwesome5 style= {{
               
-              }} name='user-alt' size={20} color={'#fff'}/>
+              }} name='user-alt' size={20} color={'#fff'}
+                onPress={() => navigation.navigate('ProfileScreen')}
+              />
+
              </View>
              </View>
          </View>
        </View>
+
       </SafeAreaView>
    ); 
    
@@ -99,12 +111,12 @@ const styles = StyleSheet.create({
        backgroundColor: 'ECF0F6',
        justifyContent: 'center',
        alignItems: "center",
-       marginTop: 30
+       marginTop: 55
     },
 
     inputContainer: {
           backgroundColor: 'lightgrey',
-          width: width / 1.9,
+          width: width / 1.3,
           padding: 8,
           marginTop: 10,
           borderRadius: 20,
@@ -124,7 +136,8 @@ const styles = StyleSheet.create({
     },
 
     flatlist: {
-      flex: 1
+      flex: 1,
+      marginTop: 30
     },
 
     images: {
