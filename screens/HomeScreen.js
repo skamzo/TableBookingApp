@@ -3,76 +3,123 @@ import { restaurants } from './restaurant';
 import { View, Text, SafeAreaView, FlatList, StyleSheet, Image, TouchableOpacity, TextInput, Dimensions} from 'react-native';
 import { FontAwesome5 } from "@expo/vector-icons"
 import { Ionicons } from '@expo/vector-icons';
+import { auth, db} from "../firebase/firebase";
 
 const { width, height } = Dimensions.get('screen');
 
 const HomeScreen = ({navigation}) => {
+
+const [email, setEmail] = React.useState(null);
   
   const Input = ({ placeholder, onChangeText }) => {
     return (
       <View style={styles.inputContainer}>
           <FontAwesome5 style= {{
               position: 'absolute',
-              left: 8,
-              top: 5,
-          }} name='search' size={20} />
+              left: 10,
+              top: 14,
+              color:'#255E69'
+          }} name='search' size={25} />
           <TextInput style={styles.input} placeholder={placeholder} />
      </View>
     );
-  }   
-
-  const Item = ({ image, name }) => {
-    return (   
-       <View style={{flexDirection: 'column'}}>
-       <View>
-      <Image style={styles.images} source={image}/>
-       </View>
-      <View style={{marginTop:-30, backgroundColor: 'white', textAlign: 'center', opacity: 0.9}}>
-      <Text style={styles.nameText}>{name}</Text>
-      </View>
-      </View>         
-    );
   } 
-
-  const LineDivider = ({ lineStyle }) => {
-      return (
-        <View
-           style={{
-              height: 2,
-              width: '100%',
-              backgroundColor: '#8A8F9E',
-              ...lineStyle
-           }}
+  
+  const RestaurantCard = ({containerStyle, imageStyle, item}) => {
+    return (
+      <TouchableOpacity
+          activeOpacity={0.8}
+          style={{
+            flexDirection: 'row',
+            borderRadius: 15,
+            alignSelf: 'center',
+             backgroundColor: 'cadetblue',
+             ...containerStyle
+          }}
+          activeOpacity={0.8} onPress={() => navigation.navigate('DetailsScreen', {
+            users: item, adminuid: item.uid, name: item.name,
+           description: item.description, image: item.image,
+           email: email, email: item.email
+          }, {title: 'Restaurants'})}
+      >
+        <Image
+           source={{uri: item.image}}
+           style={imageStyle}
         />
-      )
-  };
+        <View style={{flex: 1}}>
+            <Text style={{marginLeft: 15, color: '#fff', fontSize: 16, fontFamily: "serif"}}>{item.name}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+}
+
+  const[users, setUsers] = React.useState(null)
+    const getUsers = async () => {
+            const querySanp = await db.collection('admin').get()
+            const allusers = querySanp.docs.map(docSnap=>docSnap.data())
+            console.log(allusers)
+            setUsers(allusers)
+    }
+
+    React.useEffect(() => {
+        getUsers()
+    }, [])
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#ECF0F6' }}>
             <View style={styles.container}>   
               <Input placeholder='Search for a restaurant'/>
                <View style={styles.flatlist}>
-                 <FlatList
-                  contentContainerStyle={{paddingLeft: 20}}
-                  columnWrapperStyle={{justifyContent: 'space-between'}}
-                  numColumns={2}
-                  scrollEnabled={false}
-                  data={restaurants}
-                  renderItem = {({item}) => (
-                    <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('DetailsScreen', {
-                      restaurants: item
-                    }, {title: 'Restaurants'})} style={styles.listItem}>
-                      <Item image={item.image} name={item.name}/>
-                      </TouchableOpacity>
-                  )}
-                  
-                  //keyExtractor={(item, index) => index.toString()}
-                  keyExtractor = {(item) => item.id}
-                  //ItemSeparatorComponent={ItemSeparatorComponent}
-            />
+               <FlatList
+                data={users}
+                keyExtractor={(item) => `${item.id}`}
+                showsVerticalScrollIndicator={false}
+                renderItem={({item, index}) => {
+                    return (
+                      <RestaurantCard
+                           containerStyle={{
+                              height: 130,
+                              width: 300,
+                              alignItems: 'center',
+                              marginHorizontal: 65,
+                              marginBottom: 15,
+                              
+                              shadowColor: '#000',
+                              shadowOffset: {
+                                width: 5,
+                                height: 5,
+                              },
+                              shadowOpacity: 0.5,
+                              shadowRadius: 1.3,
+
+                              elevation: 5
+                              
+                           }}
+                           imageStyle={{
+                            alignItems: 'center',
+                              marginLeft: 10,
+                              height: 110,
+                              width: 110,
+                              borderRadius: 10,
+                              shadowColor: '#fff',
+                              shadowOffset: {
+                                width: 5,
+                                height: 5,
+                              },
+                              shadowOpacity: 0.5,
+                              shadowRadius: 1.3,
+
+                              elevation: 5
+                           }}
+                           item={item}
+                      />                     
+                    )
+                }}
+           >
+           </FlatList>
          </View>
-    
-         <View style={styles.bottomBar}>
+         
+           <View style={styles.bottomBar}>
              <View style={styles.containerIcon}>
              <View>
                 <FontAwesome5 style= {{
@@ -82,7 +129,9 @@ const HomeScreen = ({navigation}) => {
              <View>
                 <FontAwesome5 style= {{
              
-              }} name='book' size={20} color={'#fff'} />
+              }} name='book' size={20} color={'#fff'}
+              onPress={() => navigation.navigate('BookingList')}
+               />
              </View>
              <View>
         
@@ -116,10 +165,11 @@ const styles = StyleSheet.create({
 
     inputContainer: {
           backgroundColor: 'lightgrey',
-          width: width / 1.3,
+          width: width / 1.2,
           padding: 8,
           marginTop: 10,
-          borderRadius: 20,
+          borderRadius: 30,
+          height: height / 14,
 
           shadowColor: '#000',
           shadowOffset: {
@@ -128,11 +178,15 @@ const styles = StyleSheet.create({
           },
           shadowOpacity: 0.5,
           shadowRadius: 1.3,
+
+          elevation: 1
+      
     },
 
     input: {
         color: '#000',
         marginLeft: 40,
+        marginTop: 5
     },
 
     flatlist: {
@@ -152,10 +206,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginVertical: 10,
         padding: 10,
-    },
-
-    nameText: {
-        
     },
 
     bottomBar: {

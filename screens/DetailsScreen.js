@@ -2,19 +2,20 @@ import React from 'react';
 import {ImageBackground, View, Text, SafeAreaView, Dimensions, StyleSheet, Image, TextInput, TouchableOpacity, FlatList, ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { foodmenu } from './restaurant';
+//import { restaurants } from './restaurant';
 
 const { width, height } = Dimensions.get('screen');
 
 const DetailsScreen = ({ route, navigation }) => {
 
-  const [restaurants, setRestaurants] = React.useState(null);
-
+  //const [restaurants, setRestaurants] = React.useState('');
+const [users, setUsers]=  React.useState('');
   //const [showBookingModal, setShowBookingModal] = React.useState(false)
-
+const { adminuid, name, description, image}= route.params;
   React.useState(() => {
-      let { restaurants } = route.params;
-      setRestaurants(restaurants)
-  }, [restaurants])
+      let { users, adminuid } = route.params;
+      setUsers(users)
+  }, [users])
 
   const HorizontalFoodCard = ({containerStyle, imageStyle, item}) => {
         return (
@@ -44,7 +45,7 @@ const DetailsScreen = ({ route, navigation }) => {
        <View style={styles.imageBack}> 
         <View>
         <ImageBackground
-              source={restaurants.image}
+              source={{uri: image}}
               style={{
                 position: 'absolute',
                 top: 0,
@@ -77,7 +78,7 @@ const DetailsScreen = ({ route, navigation }) => {
       </View>
        
         <View>
-           <Text style={{marginTop: 200, marginLeft: 20, fontWeight: 'bold', fontSize: 20}}>{restaurants.name}</Text>
+           <Text style={{marginTop: 200, marginLeft: 20, fontWeight: 'bold', fontSize: 20}}>{name}</Text>
            <Text style={{marginLeft: 20, fontSize: 15}}>MENU</Text>
         </View>
             
@@ -111,13 +112,13 @@ const DetailsScreen = ({ route, navigation }) => {
       </View>
       <Text style={{fontWeight: 'bold', fontSize: 17, marginTop: 6, textAlign: "center"}}>About Restaurant</Text>
       <View style={{marginTop: 10}}>
-          <Text style={{marginHorizontal: 15}}>{restaurants.description}</Text>
+          <Text style={{marginHorizontal: 15}}>{description}</Text>
       </View>
     </SafeAreaView>
   );
   }
 
-  if (restaurants) {
+  if (users) {
       return (
         <View style={styles.container}> 
           <View style={styles.header}>
@@ -125,7 +126,13 @@ const DetailsScreen = ({ route, navigation }) => {
           </View> 
 
          <View style={styles.myButton}>
-           <TouchableOpacity onPress={() => navigation.navigate('BookingScreen')} >
+           <TouchableOpacity onPress={() => navigation.navigate('BookingScreen', {
+              users: users.name,
+              name: name,
+              adminuid: adminuid,
+              //users: item, adminuid: item.uid,
+              //name: item.name,
+           })} >
                 <Text style={styles.btnText}>Book a Table</Text>  
               </TouchableOpacity>
           </View>   

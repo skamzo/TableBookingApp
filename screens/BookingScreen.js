@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { restaurants } from './restaurant';
-import {TouchableOpacity, ScrollView, Dimensions, TouchableWithoutFeedback ,ImageBackground, View, Text, StyleSheet, Image} from 'react-native';
+import {TouchableOpacity, ScrollView, Dimensions, Alert ,ImageBackground, View, Text, StyleSheet, Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 //import DatePicker from 'react-native-date-picker';
-import DateTimePicker from '@react-native-community/datetimepicker'
+import DateTimePicker from '@react-native-community/datetimepicker';
+import firebase from 'firebase';
+import 'firebase/firestore';
+import { auth, db } from "../firebase/firebase";
 
-const BookingScreen = ({ navigation, route, item }) => {
+const BookingScreen = ({ navigation, route }) => {
+
+const [users, setUsers]=  React.useState('');
+
+const { name, adminuid }= route.params;
+  // React.useState(() => {
+  //     const { users, adminuid } = route.params;
+  //     setUsers(users)
+  // }, [users])
+
+  //const [email, setEmail] = React.useState(null);
+  const [password, setPassword] = React.useState(null);
+  const [firstName, setFirstName] = React.useState(null);
+  const [lastName, setLastName] = React.useState(null);
 
     //const modalAnimatedValue = React.useRef(new Animated.Value(0)).current
 
@@ -41,7 +57,36 @@ const BookingScreen = ({ navigation, route, item }) => {
         const handleDecrement = () => {
           setCount(prevCount => prevCount - 1);
         };
-
+        
+        const AddBookings = ({fDate, fTime}) => {   
+          const user = auth.currentUser;
+          navigation.navigate('ViewBooking', {
+            fDate: fDate,
+            fTime: fTime,
+            count: count,
+            name: name,
+            //name: item.name,
+          })
+          
+          if (user) {
+            db.collection("bookings").add({
+              uid: user.uid,
+              date: date,
+              count: count, 
+              name: name,
+              adminuid: adminuid
+              //name: item.name,      
+          })
+          .then((docRef) => {
+              console.log("Document written with ID: ", docRef.id);
+          })
+          .catch((error) => {
+              console.error("Error adding document: ", error);
+          });
+          } else {
+            Alert.alert("User does not exist")
+          }
+        };
 
     return (
               <View style={{flex: 1}}>
@@ -69,6 +114,7 @@ const BookingScreen = ({ navigation, route, item }) => {
             </View>
 
                    <Text style={{fontWeight: 'bold', fontSize: 18, alignSelf: 'center', marginTop: 15}}>Book a Table</Text>
+                    {restaurants.name}
                 </View>
 
                <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginHorizontal: 30, marginTop: 40}}>
@@ -130,12 +176,8 @@ const BookingScreen = ({ navigation, route, item }) => {
             )}
 
              <View style={{marginTop: 140, alignItems: 'center' }}>
-               <TouchableOpacity style={{height: 37, width: 85, backgroundColor: '#255E69', borderRadius: 50, }} onPress={() => navigation.navigate('ViewBooking', {
-                  date: date,
-                  date: date,
-                  // restaurants: restaurants,
-                  count: count
-               })} >
+               <TouchableOpacity style={{height: 37, width: 85, backgroundColor: '#255E69', borderRadius: 50, }} onPress={AddBookings}>
+         
                    <Text style={{ color: "#fff", fontSize: 13, justifyContent: "center", textAlign: "center", marginTop: 10, fontWeight: 'bold'}}>Reserve</Text>  
                </TouchableOpacity>
              </View>

@@ -9,6 +9,7 @@ import ViewBooking from './screens/ViewBooking';
 import LoginScreen from './auth/LoginScreen';
 import RegisterScreen from './auth/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import BookingList from './screens/BookingList';
 import { auth } from './firebase/firebase';
 
 const Stack = createNativeStackNavigator();
@@ -71,6 +72,7 @@ const App = () => {
         <Stack.Screen options={{headerShown: false}} name="DetailsScreen" component={DetailsScreen} />
         <Stack.Screen options={{headerShown: false}} name="BookingScreen" component={BookingScreen} />
         <Stack.Screen options={{headerShown: false}} name="ViewBooking" component={ViewBooking} />
+        <Stack.Screen options={{headerShown: false}} name="BookingList" component={BookingList} />
     
        </Stack.Navigator>
    </NavigationContainer>

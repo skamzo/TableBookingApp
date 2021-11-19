@@ -10,16 +10,14 @@ const { width, height } = Dimensions.get('screen');
 
 const ViewBooking = ({ navigation, user, route }) => {
 
-  //const {name} = route.params;
-
-  //  const [restaurants, setRestaurants] = React.useState(null);
-
-  //   React.useState(() => {
-  //       let { restaurants } = route.params;
-  //       setRestaurants(restaurants)
-  //   }, [restaurants])
-
   const [users, setUsers] = React.useState(null)
+
+  const { adminuid, name, description, image}= route.params;
+  React.useState(() => {
+      const { users, adminuid } = route.params;
+      setUsers(users)
+  }, [users])
+
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
@@ -81,7 +79,7 @@ const ViewBooking = ({ navigation, user, route }) => {
            <Text style={{fontWeight: 'bold', fontSize: 26, marginTop: 40}}>Thank you for booking!</Text>
            <View style={{marginTop: 50, width: '70%'}}>
               <Text style={{fontWeight: 'bold', textAlign: 'center'}}>
-                  congratulations, you have booked hotel for {route.params.count} people on {moment(route.params.date).format('DD/MM/YYYY')}
+                  congratulations, you have booked  {name} {route.params.restaurants} for {route.params.count} people on {moment(route.params.date).format('DD/MM/YYYY')}
                   at {moment(route.params.date).format('hh:mm a')}
                 {/* {route.params.text} */}
               </Text>
