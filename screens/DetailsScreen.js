@@ -2,6 +2,7 @@ import React from 'react';
 import {ImageBackground, View, Text, SafeAreaView, Dimensions, StyleSheet, Image, TextInput, TouchableOpacity, FlatList, ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { foodmenu } from './restaurant';
+import { db, auth } from '../firebase/firebase';
 //import { restaurants } from './restaurant';
 
 const { width, height } = Dimensions.get('screen');
@@ -11,11 +12,23 @@ const DetailsScreen = ({ route, navigation }) => {
   //const [restaurants, setRestaurants] = React.useState('');
 const [users, setUsers]=  React.useState('');
   //const [showBookingModal, setShowBookingModal] = React.useState(false)
-const { adminuid, name, description, image}= route.params;
+const { adminuid, name, description, image, email, firstName, lastName}= route.params;
   React.useState(() => {
       let { users, adminuid } = route.params;
       setUsers(users)
   }, [users])
+
+  const getMenu = async () => {
+      const uid = auth?.currentUser?.uid;
+      const querySnap = await db.collection('Menu').get()
+      const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+      console.log(allusers)
+      setUsers(allusers)
+    }
+    
+    React.useEffect(() => {
+      getMenu()
+    },[])
 
   const HorizontalFoodCard = ({containerStyle, imageStyle, item}) => {
         return (
@@ -24,16 +37,17 @@ const { adminuid, name, description, image}= route.params;
               style={{
                 flexDirection: 'row',
                 borderRadius: 15,
-                 backgroundColor: '#F2F2F2',
+                 backgroundColor: '#f9f1dc',
                  ...containerStyle
               }}
           >
             <Image
-               source={item.image}
+               source={{uri:item.image}}
                style={imageStyle}
             />
             <View style={{flex: 1}}>
                 <Text style={{marginLeft: 10}}>{item.name}</Text>
+                <Text style={{marginLeft: 10}}>R {item.price}</Text>
             </View>
           </TouchableOpacity>
         )
@@ -84,24 +98,24 @@ const { adminuid, name, description, image}= route.params;
             
       <View style={styles.flatList}>
            <FlatList
-                data={foodmenu}
+                data={users}
                 keyExtractor={(item) => `${item.id}`}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item, index}) => {
                     return (
                       <HorizontalFoodCard
                            containerStyle={{
-                              height: 80,
-                              width: 200,
+                              height: 85,
+                              width: 230,
                               alignItems: 'center',
                               marginHorizontal: 65,
                               marginBottom: 10
                            }}
                            imageStyle={{
                             alignItems: 'center',
-                              marginLeft: 10,
-                              height: 70,
-                              width: 70
+                              height: 85,
+                              width: 85,
+                              borderRadius: 10
                            }}
                            item={item}
                       />                     
@@ -130,6 +144,9 @@ const { adminuid, name, description, image}= route.params;
               users: users.name,
               name: name,
               adminuid: adminuid,
+              email: email,
+              firstName: firstName,
+              lastName: lastName
               //users: item, adminuid: item.uid,
               //name: item.name,
            })} >
@@ -192,7 +209,8 @@ const styles = StyleSheet.create({
     },
 
     flatList: {
-      marginTop: 15
+      marginTop: 15,
+      height: 280
     }
 
   })

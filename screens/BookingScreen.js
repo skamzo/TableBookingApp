@@ -123,7 +123,7 @@ const { name, adminuid }= route.params;
                    </View>
                <View>
                     <TouchableOpacity onPress={() => handleDecrement()} style={{ marginRight: 10, width: 40, height: 40, backgroundColor: '#fff', borderRadius: 20}} >
-                         <Text style={{ fontSize: 29, textAlign: "center", marginBottom: 14}}>-</Text>
+                         <Text style={{ fontSize: 29, textAlign: "center", marginBottom: 14, color: '#000'}}>-</Text>
                     </TouchableOpacity>
                 </View>
 

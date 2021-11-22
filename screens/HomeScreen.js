@@ -10,6 +10,8 @@ const { width, height } = Dimensions.get('screen');
 const HomeScreen = ({navigation}) => {
 
 const [email, setEmail] = React.useState(null);
+const [firstName, setFirstName] = React.useState('');
+const [lastName, setLastName] = React.useState('');
   
   const Input = ({ placeholder, onChangeText }) => {
     return (
@@ -39,7 +41,7 @@ const [email, setEmail] = React.useState(null);
           activeOpacity={0.8} onPress={() => navigation.navigate('DetailsScreen', {
             users: item, adminuid: item.uid, name: item.name,
            description: item.description, image: item.image,
-           email: email, email: item.email
+           email: email, email: item.email, firstName: item.firstName, lastName: item.lastName,
           }, {title: 'Restaurants'})}
       >
         <Image
@@ -64,6 +66,18 @@ const [email, setEmail] = React.useState(null);
     React.useEffect(() => {
         getUsers()
     }, [])
+
+    // const getUser = async () => {
+    //     const uid = auth?.currentUser?.uid;
+    //     const querySnap = await db.collection('users').where('uid','==', uid).get();
+    //     const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+    //     console.log(allusers)
+    //     setUsers(allusers)
+    // }
+
+    // React.useEffect(() => {
+    //     getUser()
+    // },[])
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#ECF0F6' }}>

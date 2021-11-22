@@ -1,9 +1,13 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, ScrollView, FlatList, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, ScrollView, FlatList, Image, Dimensions } from "react-native";
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
 import { auth, db } from "../firebase/firebase";
 import { SimpleLineIcons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
+import UpdateUserProfile from "./UpdateUserProfile";
 //import { Avatar } from 'react-native-elements';
+import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+
+const {height, width} = Dimensions.get('screen');
 
 const ProfileScreen = ({navigation, route}) => {
   const [displayName, setDisplayName] = useState('');
@@ -11,6 +15,7 @@ const ProfileScreen = ({navigation, route}) => {
   const [deleted, setDeleted] = useState(false);
   const [userData, setUserData] = useState(null);
   const [image, setImage] = React.useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   // const UserProfile = async () => {
   //   const uid = auth?.currentUser?.uid;
@@ -55,56 +60,29 @@ const ProfileScreen = ({navigation, route}) => {
         getUsers()
     },[])
 
-    React.useEffect(() => {
-      (async () => {
-        if (Platform.OS !== 'web') {
-          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-          }
-        }
-      })();
-    }, []);
-  
-    const PickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.cancelled) {
-        setImage(result.uri);
-      }
-    };
-
      const RenderCard = ({item}) => {
             return (
-                <View>
-      
-                    <Image source={{uri:item.avatar}}/>
-                    <View >
-                    <Text style={{fontSize: 18,  margin: 9}}>
+                    <View style={{marginTop: 85}}>
+                        <Image source={{uri:item.image}} style={styles.image} value={image}/>
+                    <Text style={{fontSize: 18,  margin: 9, marginTop: 50, marginHorizontal: 60}}>
                         <Text style={{fontWeight: 'bold', fontSize: 18}}>
                  Email:
               </Text> {item.email}
                         </Text>
-                        <Text style={{fontSize: 18, margin: 9}}>
+                        <Text style={{fontSize: 18, margin: 9, marginTop: 30, marginHorizontal: 60}}>
                         <Text style={{fontWeight: 'bold', fontSize: 18}}>
                  First Name:
               </Text> {item.firstName}
                         </Text>
-                        <Text style={{fontSize: 18, margin: 9}}>
+                        <Text style={{fontSize: 18, margin: 9, marginTop: 30, marginHorizontal: 60}}>
                         <Text style={{fontWeight: 'bold', fontSize: 18}}>
-                 last Name:
+                 Last Name:
               </Text> {item.lastName}
                         </Text>
-                    </View>
-             
-                </View>
+                <FontAwesome style={{marginHorizontal: 13, marginVertical: -94 }} name="user-circle-o" size={26} color="#2e64e5" />
+                <FontAwesome style={{marginHorizontal: 13, marginBottom: 37 }} name="user-circle-o" size={26} color="#2e64e5" />
+                <FontAwesome style={{marginHorizontal: 13, marginBottom: 60, marginVertical: 65}} name="user-circle-o" size={26} color="#2e64e5" />
+             </View>         
             )
      }
 
@@ -150,8 +128,59 @@ const ProfileScreen = ({navigation, route}) => {
     }
 
     return (
-      <View style={{flex: 1,height: '100%', width: "100%", backgroundColor:'#67C8D5'}}>
-               <View style={{marginTop: 35, alignSelf: 'flex-end'}}>
+      <View style={styles.container}>
+           {/* <View style={{
+                     position: "absolute",
+                     top: 0,
+                     left: 0,
+                     right: 0,
+                     height: 90,
+                     flexDirection: 'row',
+                     alignItems: 'flex-end',
+                     paddingHorizontal: 25,
+                     paddingBottom: 20
+                 }}>
+                <TouchableOpacity
+                 
+                 onPress = {() => navigation.navigate("HomeScreen")}
+                >
+                    <Ionicons name="arrow-back-circle-outline" size={30} color="#2e64e5" />
+                </TouchableOpacity>
+            </View> */}
+          <FlatList
+                    style={styles.myFlatList}
+                    data={users}
+                    renderItem={({item})=> {return <RenderCard item={item} />}}
+                    keyExtractor={(item) =>item.uid}
+                />
+
+            <View style={{alignSelf: 'flex-end'}}>
+               <TouchableOpacity style={{
+                    marginRight: 30
+                   }}
+                   style={styles.userBtn1}
+                   onPress={signOut}
+                >
+             <Text style={styles.userBtnTxt1}>Log out</Text>
+                </TouchableOpacity>
+               </View>
+
+               <View>
+              {isModalVisible &&
+                <UpdateUserProfile
+                   isVisible={isModalVisible}
+                   onClose={() => setModalVisible(false)}
+                />
+               } 
+          < TouchableOpacity
+                style={styles.userBtn}             
+                  onPress={() => setModalVisible(true)}
+                >
+                <Text style={styles.userBtnTxt}>Edit</Text>
+              </TouchableOpacity>
+              </View> 
+      
+               {/* <View style={{marginTop: 35, alignSelf: 'flex-end'}}>
                <TouchableOpacity style={{
                     marginRight: 35
                    }}
@@ -160,30 +189,8 @@ const ProfileScreen = ({navigation, route}) => {
                     <SimpleLineIcons name="logout" size={24}
                      color="#000" />
                 </TouchableOpacity>
-               </View>
-          <View style={{backgroundColor: '#fff', height: '80%', marginTop: 170, borderTopLeftRadius: 30, borderTopRightRadius: 30}}>
-          {/* <ScrollView
-            style={styles.container}
-            contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
-            showsVerticalScrollIndicator={false}>
-            <Image
-              style={styles.userImg}
-              source={{uri: userData ? userData.userImg || 'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg' : 'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg'}}
-        />
-        </ScrollView> */}
-            <View>
-              <TouchableOpacity  onPress={PickImage}>
-              <Image style={styles.image} source={{uri: image}} value={image}/>
-              {/* {image && <Image source={{ uri: image }} />} */}
-              </TouchableOpacity>
-          </View>
-              <FlatList
-                    style={styles.myFlatList}
-                    data={users}
-                    renderItem={({item})=> {return <RenderCard item={item} />}}
-                    keyExtractor={(item) =>item.uid}
-                />
-          </View>
+               </View> */}
+         
       </View>
     )
 }
@@ -193,38 +200,55 @@ export default ProfileScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: '100%',
+    width: "100%",
+    backgroundColor:'#ecf0f6',
+    alignSelf: 'center'
   },
 
-  myFlatList: {
-    marginTop: 100,
-    marginLeft: 20,
-    marginVertical: 20
-},
+//   myFlatList: {
+   
+//     marginLeft: 20,
+    
+// },
 
 image: {
   width: 140,
   height: 140,
-  borderRadius: 200,
+  borderRadius: 70,
   borderWidth: 2,
   backgroundColor: "lightgrey",
-  marginTop: -70,
-  alignSelf: 'center'
-  
+  alignSelf: 'center',
+  marginTop: 50,
 },
 
-thumbnail: {
-  width: 300,
-  height: 300,
-  resizeMode: "contain"
+userBtn: {
+  borderColor: '#2e64e5',
+  borderWidth: 2,
+  borderRadius: 3,
+  paddingVertical: 8,
+  paddingHorizontal: 14,
+  marginHorizontal: 25,
+  marginBottom: 150,
+  width: 80
+},
+userBtnTxt: {
+  color: '#2e64e5',
+  textAlign: 'center'
 },
 
-myImage: {
-    width: 300,
-    height: 300,
-    resizeMode: "contain"
+userBtn1: {
+  borderColor: '#2e64e5',
+  borderWidth: 2,
+  borderRadius: 3,
+  paddingVertical: 8,
+  paddingHorizontal: 14,
+  marginHorizontal: 30,
+  marginBottom: -39,
+  width: 80
+},
+userBtnTxt1: {
+  color: '#2e64e5',
 },
 
 });
