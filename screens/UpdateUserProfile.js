@@ -4,14 +4,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db, auth } from '../firebase/firebase';
 
-const UpdateUserProfile = ({isVisible, onClose}) => {
+const UpdateUserProfile = ({isVisible, onClose, email, firstName, lastName, image}) => {
 
     const [isModalVisible, setModalVisible] = React.useState(isVisible);
-    const [image, setImage] = React.useState(null);
+    const [image1, setImage1] = React.useState(image);
     const [selectedValue, setSelectedValue] = React.useState("Beverage");
-    const [email, setEmail] = React.useState('');
-    const [firstName, setFirstName] = React.useState('');
-    const [lastName, setLastName] = React.useState('');
+    const [email1, setEmail1] = React.useState(email);
+    const [firstName1, setFirstName1] = React.useState(firstName);
+    const [lastName1, setLastName1] = React.useState(lastName);
     const [price, setPrice] = React.useState('');
     
     React.useEffect(() => {
@@ -108,8 +108,8 @@ const UpdateUserProfile = ({isVisible, onClose}) => {
                placeholder="E-mail"
                placeholderTextColor="#60594F"
                style={styles.textInput}    
-               value={email}
-               onChangeText={text => setEmail(text)}  
+               value={email1}
+               onChangeText={text => setEmail1(text)}  
             ></TextInput>
            </View>
            <View>
@@ -117,8 +117,8 @@ const UpdateUserProfile = ({isVisible, onClose}) => {
                placeholder="First Name"
                placeholderTextColor="#60594F"
                style={styles.textInput}    
-               value={firstName}
-               onChangeText={text => setFirstName(text)}  
+               value={firstName1}
+               onChangeText={text => setFirstName1(text)}  
             ></TextInput>
            </View>
            <View>
@@ -126,8 +126,8 @@ const UpdateUserProfile = ({isVisible, onClose}) => {
                placeholder="Last Name"
                placeholderTextColor="#60594F"
                style={styles.textInput}    
-               value={lastName}
-               onChangeText={text => setLastName(text)}  
+               value={lastName1}
+               onChangeText={text => setLastName1(text)}  
             ></TextInput>
            </View>
        

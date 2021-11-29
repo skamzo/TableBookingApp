@@ -6,10 +6,11 @@ import UpdateUserProfile from "./UpdateUserProfile";
 //import { Avatar } from 'react-native-elements';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5 } from "@expo/vector-icons"
 
 const {height, width} = Dimensions.get('screen');
 
-const ProfileScreen = ({navigation, route}) => {
+const ProfileScreen = ({navigation, route, firstName}) => {
   const [displayName, setDisplayName] = useState('');
   //const [firstName, setFirstName] = useState('')
   const [deleted, setDeleted] = useState(false);
@@ -45,8 +46,8 @@ const ProfileScreen = ({navigation, route}) => {
   // }
 
   const [users, setUsers] = useState(null)
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    //const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState(lastName);
     const [imageUrl, setImageUrl] = useState('');
     const getUsers = async () => {
         const uid = auth?.currentUser?.uid;
@@ -169,7 +170,9 @@ const ProfileScreen = ({navigation, route}) => {
               {isModalVisible &&
                 <UpdateUserProfile
                    isVisible={isModalVisible}
-                   onClose={() => setModalVisible(false)}
+                   onClose={() => setModalVisible(false, {
+                    firstName: firstName
+                   })}
                 />
                } 
           < TouchableOpacity
@@ -190,7 +193,33 @@ const ProfileScreen = ({navigation, route}) => {
                      color="#000" />
                 </TouchableOpacity>
                </View> */}
-         
+           <View style={styles.bottomBar}>
+             <View style={styles.containerIcon}>
+             <View>
+                <FontAwesome5 style= {{
+                    
+              }} name='home' size={20} color={'#fff'}
+              onPress={() => navigation.navigate('HomeScreen')}
+               />
+             </View>
+             <View>
+                <FontAwesome5 style= {{
+             
+              }} name='book' size={20} color={'#fff'}
+              onPress={() => navigation.navigate('BookingList')}
+               />
+             </View>
+             <View>
+        
+                <FontAwesome5 style= {{
+              
+              }} name='user-alt' size={20} color={'#fff'}
+                onPress={() => navigation.navigate('ProfileScreen')}
+              />
+
+             </View>
+             </View>
+         </View>
       </View>
     )
 }
@@ -229,7 +258,7 @@ userBtn: {
   paddingVertical: 8,
   paddingHorizontal: 14,
   marginHorizontal: 25,
-  marginBottom: 150,
+  marginBottom: 100,
   width: 80
 },
 userBtnTxt: {
@@ -249,6 +278,21 @@ userBtn1: {
 },
 userBtnTxt1: {
   color: '#2e64e5',
+},
+
+bottomBar: {
+  height: height * 0.06,
+  width: '100%',
+  backgroundColor: '#255E69',
+  borderTopLeftRadius: 50,
+  borderTopRightRadius: 50,
+},
+
+containerIcon: {
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  marginTop: 20,
+  color: '#fff'
 },
 
 });

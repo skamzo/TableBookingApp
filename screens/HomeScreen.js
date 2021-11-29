@@ -11,7 +11,7 @@ const HomeScreen = ({navigation}) => {
 
 const [email, setEmail] = React.useState(null);
 const [firstName, setFirstName] = React.useState('');
-const [lastName, setLastName] = React.useState('');
+const [name, setName] = React.useState();
   
   const Input = ({ placeholder, onChangeText }) => {
     return (
@@ -22,10 +22,25 @@ const [lastName, setLastName] = React.useState('');
               top: 14,
               color:'#255E69'
           }} name='search' size={25} />
-          <TextInput style={styles.input} placeholder={placeholder} />
+          <TextInput style={styles.input} placeholder={placeholder}
+          onChangeText={(value) => (value)}
+           />
      </View>
     );
   } 
+
+  //  const SearchHotel = (value) => {
+  //   const filteredName = users.name.filter(
+  //      name => {
+  //        let nameLowerCase = (users.name).toLoweCase()
+
+  //        let searchTermLowerCase = value.toLoweCase()
+
+  //        return nameLowerCase.indexOf(searchTermLowerCase) > -1
+  //      }
+  //   )
+  //    ({name: filteredName})
+  // }
   
   const RestaurantCard = ({containerStyle, imageStyle, item}) => {
     return (

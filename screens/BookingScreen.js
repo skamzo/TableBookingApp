@@ -18,7 +18,7 @@ const { name, adminuid }= route.params;
   //     setUsers(users)
   // }, [users])
 
-  //const [email, setEmail] = React.useState(null);
+  const [email, setEmail] = React.useState(null);
   const [password, setPassword] = React.useState(null);
   const [firstName, setFirstName] = React.useState(null);
   const [lastName, setLastName] = React.useState(null);
@@ -65,6 +65,7 @@ const { name, adminuid }= route.params;
             fTime: fTime,
             count: count,
             name: name,
+            status: "Pending",
             //name: item.name,
           })
           
@@ -74,12 +75,15 @@ const { name, adminuid }= route.params;
               date: date,
               count: count, 
               name: name,
-              adminuid: adminuid
+              adminuid: adminuid,
+              status: "Pending",
               //name: item.name,      
           })
           .then((docRef) => {
-              console.log("Document written with ID: ", docRef.id);
+            docRef.update({
+              key: docRef.id,
           })
+        })
           .catch((error) => {
               console.error("Error adding document: ", error);
           });

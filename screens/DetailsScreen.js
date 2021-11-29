@@ -10,9 +10,11 @@ const { width, height } = Dimensions.get('screen');
 const DetailsScreen = ({ route, navigation }) => {
 
   //const [restaurants, setRestaurants] = React.useState('');
+const [menu, setMenu]=  React.useState('');
 const [users, setUsers]=  React.useState('');
+
   //const [showBookingModal, setShowBookingModal] = React.useState(false)
-const { adminuid, name, description, image, email, firstName, lastName}= route.params;
+const { adminuid, name, description, image, email, lastName, firstName}= route.params;
   React.useState(() => {
       let { users, adminuid } = route.params;
       setUsers(users)
@@ -21,14 +23,26 @@ const { adminuid, name, description, image, email, firstName, lastName}= route.p
   const getMenu = async () => {
       const uid = auth?.currentUser?.uid;
       const querySnap = await db.collection('Menu').get()
-      const allusers = querySnap.docs.map(docSnap=>docSnap.data())
-      console.log(allusers)
-      setUsers(allusers)
+      const allmenu = querySnap.docs.map(docSnap=>docSnap.data())
+      console.log(allmenu)
+      setMenu(allmenu)
     }
     
     React.useEffect(() => {
       getMenu()
     },[])
+
+    const getUsers = async () => {
+      const uid = auth?.currentUser?.uid;
+      const querySnap = await db.collection('users').where("uid", "==", uid).get()
+      const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+      console.log(allusers)
+      setUsers(allusers)
+  }
+
+  React.useEffect(() => {
+    getUsers()
+},[])
 
   const HorizontalFoodCard = ({containerStyle, imageStyle, item}) => {
         return (
@@ -46,8 +60,8 @@ const { adminuid, name, description, image, email, firstName, lastName}= route.p
                style={imageStyle}
             />
             <View style={{flex: 1}}>
-                <Text style={{marginLeft: 10}}>{item.name}</Text>
-                <Text style={{marginLeft: 10}}>R {item.price}</Text>
+                <Text style={{marginLeft: 30}}>{item.name}</Text>
+                <Text style={{marginLeft: 30}}>Price: R {item.price}</Text>
             </View>
           </TouchableOpacity>
         )
@@ -97,8 +111,9 @@ const { adminuid, name, description, image, email, firstName, lastName}= route.p
         </View>
             
       <View style={styles.flatList}>
+        
            <FlatList
-                data={users}
+                data={menu}
                 keyExtractor={(item) => `${item.id}`}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item, index}) => {
@@ -106,8 +121,9 @@ const { adminuid, name, description, image, email, firstName, lastName}= route.p
                       <HorizontalFoodCard
                            containerStyle={{
                               height: 85,
-                              width: 230,
+                              width: 280,
                               alignItems: 'center',
+                              alignSelf: 'center',
                               marginHorizontal: 65,
                               marginBottom: 10
                            }}
@@ -123,6 +139,16 @@ const { adminuid, name, description, image, email, firstName, lastName}= route.p
                 }}
            >
            </FlatList>
+      </View>
+      <View>
+      <FlatList
+            data={users}
+            renderItem={({item, index}) => {
+              item.firstName
+          }}
+            keyExtractor={(item) =>item.uid}   
+            showsVerticalScrollIndicator={false}        
+        />
       </View>
       <Text style={{fontWeight: 'bold', fontSize: 17, marginTop: 6, textAlign: "center"}}>About Restaurant</Text>
       <View style={{marginTop: 10}}>
@@ -141,7 +167,7 @@ const { adminuid, name, description, image, email, firstName, lastName}= route.p
 
          <View style={styles.myButton}>
            <TouchableOpacity onPress={() => navigation.navigate('BookingScreen', {
-              users: users.name,
+              users: users,
               name: name,
               adminuid: adminuid,
               email: email,

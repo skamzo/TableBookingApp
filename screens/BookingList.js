@@ -7,18 +7,32 @@ import moment from 'moment';
 const BookingList = ({ navigation, route }) => {
 
     const [users, setUsers] = React.useState(null);
+    const [bookings, setBookings] = React.useState(null);
 
-    const getUsers = async () => {
+    const getBookings = async () => {
       const uid = auth?.currentUser?.uid;
       const querySnap = await db.collection('bookings').where("uid", "==", uid).get()
-      const allusers = querySnap.docs.map(docSnap=>docSnap.data())
-      console.log(allusers)
-      setUsers(allusers)
+      const allbookings = querySnap.docs.map(docSnap=>docSnap.data())
+      console.log(allbookings)
+      setBookings(allbookings)
   }
  
   React.useEffect(() => {
-      getUsers()
+      getBookings()
   },[])
+
+  const getUsers = async () => {
+    const uid = auth?.currentUser?.uid;
+    const querySnap = await db.collection('users').where("uid", "==", uid).get()
+    const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+    console.log(allusers)
+    setUsers(allusers)
+}
+
+React.useEffect(() => {
+  getUsers()
+},[])
+
 
   const RenderCard = ({item}) => {
     return (
@@ -47,6 +61,11 @@ const BookingList = ({ navigation, route }) => {
                     Time:
                 </Text> {moment(item.date.toDate()).format('HH:mm A')}
                 </Text> 
+                <Text style={{color: '#000'}}>
+               <Text style={{fontWeight: 'bold'}}>
+                  Status:
+                </Text> {item.status}
+                </Text> 
               </View>
             </View>
        
@@ -58,8 +77,7 @@ const BookingList = ({ navigation, route }) => {
         <Text style={{marginTop: 55, fontWeight: 'bold', fontSize: 24, color: '#fff'}}>List of Bookings</Text>
       <View style={{ flex: 1, marginTop: 15, textAlign: 'center' }}>
               <FlatList
-                    data={users}
-                    data={users}
+                    data={bookings}
                     renderItem={({item})=> {return <RenderCard item={item} />}}
                     keyExtractor={(item) =>item.uid}   
                     showsVerticalScrollIndicator={false}        

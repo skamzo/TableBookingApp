@@ -12,15 +12,12 @@ const ViewBooking = ({ navigation, user, route }) => {
 
   const [users, setUsers] = React.useState(null)
 
-  const { adminuid, name, description, image, email, firstName, lastName}= route.params;
+  const { adminuid, name, description, image, firstName, lastName}= route.params;
   React.useState(() => {
       const { users, adminuid } = route.params;
       setUsers(users)
   }, [users])
 
-  // const [firstName, setFirstName] = React.useState('');
-  // const [lastName, setLastName] = React.useState('');
-  // const [email, setEmail] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
 
   const getUsers = async () => {
@@ -80,8 +77,8 @@ const ViewBooking = ({ navigation, user, route }) => {
            <Text style={{fontWeight: 'bold', fontSize: 26, marginTop: 40}}>Thank you for booking!</Text>
            <View style={{marginTop: 50, width: '70%'}}>
               <Text style={{fontWeight: 'bold', textAlign: 'center'}}>
-                  congratulations {route.params.email}{route.params.firstName}{route.params.lastName},  you have booked {route.params.restaurants} for {route.params.count} people on {moment(route.params.date).format('DD/MM/YYYY')} 
-                   at {moment(route.params.date).format('hh:mm a')}
+                  congratulations {route.params.firstName} {route.params.lastName}, you have booked {route.params.name} for {route.params.count} people on {moment(route.params.date).format('DD/MM/YYYY')}
+                  at {moment(route.params.date).format('hh:mm a')}
                 {/* {route.params.text} */}
               </Text>
            </View>
